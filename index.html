@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fukuoka Hotel Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .area-btn-active { background-color: #be123c; color: white; border-color: #be123c; }
+        .area-btn-inactive { background-color: white; color: #4b5563; border-color: #d1d5db; }
+        .cat-btn-active { background-color: #fb7185; color: white; border-color: #fb7185; }
+        .cat-btn-inactive { background-color: #f8fafc; color: #64748b; }
+        body { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-gray-800 pb-12">
+
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        <header class="text-center mb-8 flex justify-between items-center">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800">🏨 Fukuoka Hotel Picks</h1>
+            <a href="https://linkuei0425.github.io/Busan/FUKUOKA-US.html" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-300 transition-colors">Back to Home</a>
+        </header>
+
+        <!-- Area Selection Buttons -->
+        <div id="district-buttons" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6"></div>
+        <!-- Category Selection Buttons -->
+        <div id="category-buttons" class="grid grid-cols-3 gap-3 mb-8 bg-white p-3 rounded-xl shadow-sm border border-slate-200 hidden"></div>
+        <!-- Content Display Area -->
+        <div id="content-area" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 min-h-[300px]"></div>
+    </div>
+
+    <script>
+        const hotelData = {
+            "hakata": {
+                name: "Hakata Station (Hub)",
+                categories: {
+                    "Luxury Hotels": [
+                        { name: "Miyako Hotel Hakata", feature: "Direct access from Hakata Station Chikushi Gate! Stunning rooftop hot spring pool and SPA for absolute luxury.", address: "Next to Hakata Station Chikushi Gate", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705197/miyako-hotel-hakata/?Allianceid=7913725&SID=298418583&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Hotel Nikko Fukuoka", feature: "Classic 5-star luxury hotel with an underground passage directly to Hakata Station. Excellent service and spacious rooms.", address: "3 mins walk from Hakata Station Hakata Gate", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-993535/hotel-nikko-fukuoka/?Allianceid=7913725&SID=298418583&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Blossom Hakata Premier", feature: "Premium hotel with modern Japanese design, featuring a high-quality Japanese-style large bath. Highly rated by travelers.", address: "7 mins walk from Hakata Station Hakata Gate", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-38934428/the-blossom-hakata-premier/?Allianceid=7913725&SID=298418583&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Great Value": [
+                        { name: "Richmond Hotel Hakata Ekimae", feature: "Extremely high cost-performance ratio, rich breakfast, and rooms more spacious than typical business hotels.", address: "4 mins walk from Hakata Station Chikushi Gate", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705311/richmond-hotel-hakata-ekimae/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "JR Kyushu Hotel Blossom Hakata Central", feature: "Directly operated by JR Kyushu. Unbeatable convenience, the top choice for clean and comfortable business travel.", address: "2 mins walk from Hakata Station Hakata Gate", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-1935612/jr-kyushu-hotel-blossom-hakata-central/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Hostels & Guesthouses": [
+                        { name: "WeBase Hakata", feature: "Giant space cat statue at the entrance! Huge, fully-equipped lounge, a favorite among international backpackers.", address: "Between Nakasu-Kawabata and Hakata Stations", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-10520871/webase-hakata-hostel/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Nine Hours Hakata Station", feature: "Minimalist capsule hotel offering a high-quality sleep experience and premium branded toiletries.", address: "3 mins walk from Hakata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-67314412/9h-nine-hours-hakata-station/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ]
+                }
+            },
+            "tenjin": {
+                name: "Tenjin (Shopping)",
+                categories: {
+                    "Luxury Hotels": [
+                        { name: "The Ritz-Carlton, Fukuoka", feature: "Fukuoka's newest top luxury hotel, offering high-altitude views of the city and Hakata Bay, with impeccable service.", address: "Inside Fukuoka Daimyo Garden City (Near Tenjin Station)", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-106966995/the-ritz-carlton-fukuoka/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Solaria Nishitetsu Hotel Fukuoka", feature: "Co-located with Nishitetsu Fukuoka Station and a department store. Step downstairs to shop—ultimate convenience!", address: "Directly connected to Tenjin Station / Nishitetsu Fukuoka Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705248/solaria-nishitetsu-hotel-fukuoka/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Nishitetsu Grand Hotel", feature: "A classic star-rated hotel with a long history in Fukuoka. Elegant and calm, housing several renowned restaurants.", address: "3 mins walk from Tenjin Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705211/nishitetsu-grand-hotel/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Great Value": [
+                        { name: "Richmond Hotel Tenjin Nishi-Dori", feature: "Located in the bustling Nishi-Dori shopping district. Super convenient for shopping and food, with high ratings for service and cleanliness.", address: "5 mins walk from Tenjin Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-25797449/richmond-hotel-tenjin-nishidori/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "KOKO HOTEL Fukuoka Tenjin", feature: "Affordable, simple, and modern design. Surrounded by convenience stores and local restaurants, a budget traveler's favorite.", address: "3 mins walk from Tenjin-minami Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-704237/hotel-unizo-fukuoka-tenjin/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Hotel MyStays Fukuoka Tenjin", feature: "Cheap room rates, with simple microwaves in some rooms. Perfect for travelers staying for multiple days.", address: "4 mins walk from Tenjin Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-736852/hotel-mystays-fukuoka-tenjin/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Hostels & Guesthouses": [
+                        { name: "Fukuoka Guest House HIVE", feature: "A cozy wood-toned hostel hidden in the city, with a rooftop terrace and friendly, welcoming staff.", address: "Walking distance from Tenjin/Akasaka Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-11133397/fukuoka-guest-house-jikka/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "The OneFive Fukuoka Tenjin", feature: "Affordable accommodation sitting between a business hotel and a hostel. No extra services, but highly competitive rates.", address: "8 mins walk from Tenjin Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-68262644/the-onefive-fukuoka-tenjin/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ]
+                }
+            },
+            "nakasu": {
+                name: "Nakasu (Nightlife)",
+                categories: {
+                    "Luxury Hotels": [
+                        { name: "Grand Hyatt Fukuoka", feature: "International 5-star hotel connected to Canal City Hakata. Super convenient for shopping and watching water shows.", address: "Inside Canal City Hakata", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-703900/grand-hyatt-fukuoka/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Mitsui Garden Hotel Fukuoka Nakasu", feature: "High-quality hotel from the Mitsui Garden series. Relax in the beautiful scenic large bath on the top floor.", address: "2 mins walk from Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-56699615/mitsui-garden-hotel-fukuoka-nakasu/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Hotel Okura Fukuoka", feature: "Traditional Japanese luxury feel with spacious rooms. Underground passage directly connects to the subway station and Hakataza Theater.", address: "Directly connected to Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705526/hotel-okura-fukuoka/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Great Value": [
+                        { name: "Vessel Inn Hakata Nakasu", feature: "Highly rated breakfast! Offers all-you-can-eat seafood and mentaiko, located right next to the Naka River.", address: "1 min walk from Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705503/vessel-inn-hakata-nakasu/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Hotel Resol Trinity Hakata", feature: "Lobby overlooks Nakasu's night view. Stunning top-floor large bath, perfect for soaking after visiting Yatai.", address: "1 min walk from Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705213/hotel-resol-trinity-hakata/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Hakata Excel Hotel Tokyu", feature: "Right next to the Nakasu Yatai street. Enjoy late-night snacks and drinks without worrying about missing the last train.", address: "2 mins walk from Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-705193/hakata-excel-hotel-tokyu-fukuoka/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Hostels & Guesthouses": [
+                        { name: "The Millennials Fukuoka", feature: "High-tech capsule hotel. Lobby offers free beer Happy Hour, super trendy design.", address: "3 mins walk from Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-41592743/the-millennials-fukuoka/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "First Cabin Hakata", feature: "Premium capsules modeled after airplane first class. Located above Don Quijote, shop 24H!", address: "Building directly connected to Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-2507624/first-cabin-hakata/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Nine Hours Nakasu-Kawabata", feature: "Minimalist black-and-white designed capsules, affordable prices, very clean and comfortable washrooms.", address: "2 mins walk from Nakasu-Kawabata Station", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-42767025/nine-hours-nakasukawabata-station/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ]
+                }
+            },
+            "itoshima": {
+                name: "Itoshima (Coastline)",
+                categories: {
+                    "Luxury Hotels": [
+                        { name: "Seven x Seven Itoshima", feature: "Newly opened in 2024, a stunning ocean-view luxury resort. All rooms feature endless sea views and terraces.", address: "Nijo Area Coastline, Itoshima", url: "https://www.trip.com/hotels/fukuoka-hotel-detail-115431251/seven-xsevenitoshima/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "GLOCAL HOTEL Itoshima", feature: "A modern, well-designed premium resort hotel. Beautiful surrounding natural environment, featuring natural hot springs.", address: "Around Maebaru, Itoshima", url: "https://www.trip.com/hotels/itoshima-hotel-detail-73250918/settle-glocal-hotel-itoshima/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Great Value": [
+                        { name: "Hotel AZ Fukuoka Itoshima", feature: "Driver-friendly large budget hotel chain, with free parking, a 100-yen shop, and a family restaurant attached.", address: "10 mins walk from JR Hatae Station", url: "https://www.trip.com/hotels/itoshima-hotel-detail-21831617/hotel-az-fukuoka-itoshima/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ]
+                }
+            },
+            "yufuin": {
+                name: "Yufuin (Hot Springs)",
+                categories: {
+                    "Luxury Hotels": [
+                        { name: "Yufuin Tamanoyu", feature: "One of Yufuin's 'Top Three' (Gosanke), a premium Japanese hot spring ryokan hidden in the forest. Top-notch food and service.", address: "15 mins walk from Yufuin Station", url: "https://www.trip.com/hotels/yufu-hotel-detail-1652227/yufuin-tamanoyu-oita/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Kamenoi Bessou", feature: "One of Yufuin's 'Top Three', a historic star-rated century-old building, featuring expansive natural gardens.", address: "Next to Lake Kinrin", url: "https://www.trip.com/hotels/yufu-hotel-detail-1652229/kamenoi-bessou/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Great Value": [
+                        { name: "Yufuin Sansuikan", feature: "Open-air baths with stunning views of Mount Yufu. Features an in-house craft beer brewery, great CP value for food and stay.", address: "8 mins walk from Yufuin Station", url: "https://www.trip.com/hotels/yufu-hotel-detail-1678725/yufuin-sansuikan/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "ETAVIA Yufuinkirin-ko", feature: "Excellent location, right next to Lake Kinrin and Yunotsubo Street. Modern and comfortable rooms at a reasonable price.", address: "2 mins walk from Lake Kinrin", url: "https://www.trip.com/hotels/yufu-hotel-detail-10633009/etavia-yufuin/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" },
+                        { name: "Yufuin Lamp no Yado", feature: "Renovated from a century-old folk house, full of Taisho romantic atmosphere. Offers several free private baths and bicycle rentals.", address: "7 mins walk from Yufuin Station", url: "https://www.trip.com/hotels/yufu-hotel-detail-21864145/yufuin-lamp-no-yado/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ],
+                    "Hostels & Guesthouses": [
+                        { name: "Country Road Youth Hostel", feature: "Cozy atmosphere with a very passionate owner who leads games at night. Hot springs available on-site.", address: "Yufuin Heights (Taxi recommended)", url: "https://www.trip.com/hotels/yufu-hotel-detail-706152/yufuin-country-road-youth-hostel/?Allianceid=7913725&SID=298418583&trip_sub1=&trip_sub3=D13742493&locale=en_xx&curr=USD" }
+                    ]
+                }
+            }
+        };
+
+        const districtContainer = document.getElementById('district-buttons');
+        const categoryContainer = document.getElementById('category-buttons');
+        const contentArea = document.getElementById('content-area');
+        let curDist = null, curCat = null;
+
+        function init() {
+            Object.keys(hotelData).forEach(k => {
+                let b = document.createElement('button');
+                b.className = 'px-2 py-2.5 rounded-lg font-bold text-[13px] md:text-sm border area-btn-inactive transition-colors duration-200';
+                b.innerText = hotelData[k].name;
+                b.onclick = () => selectDist(k, b);
+                districtContainer.appendChild(b);
+            });
+            selectDist('hakata', districtContainer.children[0]);
+        }
+
+        function selectDist(k, b) {
+            curDist = k;
+            Array.from(districtContainer.children).forEach(btn => btn.className = 'px-2 py-2.5 rounded-lg font-bold text-[13px] md:text-sm border area-btn-inactive transition-colors duration-200');
+            b.className = 'px-2 py-2.5 rounded-lg font-bold text-[13px] md:text-sm border area-btn-active transition-colors duration-200 shadow-md';
+            categoryContainer.classList.remove('hidden');
+            renderCats();
+        }
+
+        function renderCats() {
+            categoryContainer.innerHTML = '';
+            Object.keys(hotelData[curDist].categories).forEach(c => {
+                let b = document.createElement('button');
+                b.className = 'px-2 py-2 rounded-lg font-bold text-[13px] md:text-sm border cat-btn-inactive transition-colors duration-200';
+                b.innerText = c;
+                b.onclick = () => selectCat(c, b);
+                categoryContainer.appendChild(b);
+            });
+            selectCat(Object.keys(hotelData[curDist].categories)[0], categoryContainer.children[0]);
+        }
+
+        function selectCat(c, b) {
+            curCat = c;
+            Array.from(categoryContainer.children).forEach(btn => btn.className = 'px-2 py-2 rounded-lg font-bold text-[13px] md:text-sm border cat-btn-inactive transition-colors duration-200');
+            b.className = 'px-2 py-2 rounded-lg font-bold text-[13px] md:text-sm border cat-btn-active transition-colors duration-200 shadow-sm';
+            renderHotels();
+        }
+
+        function renderHotels() {
+            let h = hotelData[curDist].categories[curCat];
+            contentArea.innerHTML = h.map((x, index) => `
+                <div class="mb-5 p-5 border border-slate-100 rounded-xl bg-slate-50 hover:shadow-md transition-shadow">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                        <h3 class="font-bold text-lg text-rose-700 flex items-start sm:items-center gap-2">
+                            <span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md text-sm shrink-0">${index + 1}</span>
+                            <span>${x.name}</span>
+                        </h3>
+                        <a href="${x.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white text-[13px] font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors shrink-0">
+                            View Hotel Details
+                        </a>
+                    </div>
+                    <p class="text-sm text-gray-700 mt-3 leading-relaxed">
+                        <strong class="text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Features</strong> ${x.feature}
+                    </p>
+                    <p class="text-sm text-gray-600 mt-2">
+                        <strong class="text-slate-600 bg-slate-200 px-1.5 py-0.5 rounded">Location</strong> ${x.address}
+                    </p>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
